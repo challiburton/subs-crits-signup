@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Design Crit / Jam Sign-up</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f9f9f9; min-height: 100vh; display: flex; justify-content: center; padding: 2rem 1rem; }
+    .container { width: 100%; max-width: 680px; }
+    .header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; }
+    .header h1 { font-size: 20px; font-weight: 500; color: #1a1a1a; margin-bottom: 4px; }
+    .header p { font-size: 13px; color: #666; }
+    .counter { background: #f1f1f1; border: 0.5px solid #ddd; border-radius: 8px; padding: 6px 14px; text-align: center; flex-shrink: 0; }
+    .counter .num { font-size: 18px; font-weight: 500; color: #1a1a1a; }
+    .counter .label { font-size: 11px; color: #888; }
+    .week-selector { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 14px 16px; margin-bottom: 1.25rem; }
+    .week-selector label { font-size: 12px; color: #666; display: block; margin-bottom: 8px; font-weight: 500; }
+    .week-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .week-tab { font-size: 12px; padding: 6px 14px; border-radius: 6px; border: 0.5px solid #ddd; background: #fff; cursor: pointer; color: #444; transition: all 0.15s; }
+    .week-tab:hover { border-color: #999; }
+    .week-tab.selected { background: #EEEDFE; border-color: #CECBF6; color: #3C3489; font-weight: 500; }
+    .legend { display: flex; gap: 16px; margin-bottom: 1rem; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #666; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .session { margin-bottom: 1.5rem; }
+    .session-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .day-badge { background: #EEEDFE; border: 0.5px solid #CECBF6; border-radius: 8px; padding: 4px 12px; font-size: 13px; font-weight: 500; color: #3C3489; }
+    .session-date { font-size: 12px; color: #666; }
+    .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .slot { border-radius: 12px; padding: 14px 16px; cursor: pointer; border: 0.5px solid #e0e0e0; background: #fff; transition: border-color 0.15s; }
+    .slot:hover { border-color: #999; }
+    .slot.active { border: 1.5px solid #534AB7; cursor: default; }
+    .slot.booked { background: #E1F5EE; border-color: #9FE1CB; cursor: default; }
+    .slot-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .slot-badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px; }
+    .slot-badge.open { background: #EEEDFE; border: 0.5px solid #CECBF6; color: #3C3489; }
+    .slot-badge.booked { background: #9FE1CB; color: #085041; }
+    .slot-desc { font-size: 12px; color: #999; margin-bottom: 10px; }
+    .signup-cta { font-size: 12px; color: #534AB7; font-weight: 500; }
+    .booked-info { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: #5DCAA5; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: #085041; flex-shrink: 0; }
+    .booked-name { font-size: 13px; font-weight: 500; color: #085041; }
+    .booked-project { font-size: 11px; color: #0F6E56; margin-top: 2px; }
+    .form-field { margin-bottom: 8px; }
+    .form-field label { font-size: 11px; color: #666; display: block; margin-bottom: 4px; }
+    .form-field select { font-size: 13px; width: 100%; padding: 7px 10px; border: 0.5px solid #ccc; border-radius: 6px; background: #fff; outline: none; }
+    .form-field select:focus { border-color: #534AB7; }
+    .btn-row { display: flex; gap: 6px; margin-top: 10px; }
+    .btn-confirm { flex: 1; font-size: 12px; font-weight: 500; padding: 7px 0; background: #534AB7; color: #EEEDFE; border: none; border-radius: 6px; cursor: pointer; }
+    .btn-confirm:hover { background: #3C3489; }
+    .btn-cancel { font-size: 12px; padding: 7px 12px; background: transparent; color: #666; border: 0.5px solid #ddd; border-radius: 6px; cursor: pointer; }
+    .btn-remove { font-size: 11px; width: 100%; margin-top: 4px; padding: 5px 0; background: transparent; color: #c0392b; border: 0.5px solid #e0b0b0; border-radius: 6px; cursor: pointer; }
+    .btn-remove:hover { background: #fff0f0; }
+    .footer { border-top: 0.5px solid #e0e0e0; padding-top: 12px; margin-top: 4px; font-size: 11px; color: #aaa; }
+    .status-bar { font-size: 11px; color: #aaa; }
+    .loading { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div id="app"><div class="loading">Loading sign-up sheet...</div></div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/a/macros/creditkarma.com/s/AKfycbyjGA0yY23-Vc1W7RQIsf8vjJusfNOtZos6j32wCJNHf_JOH6NRaPgbe_mwfvUej4cr/exec";
+
+const designers = ["Alicia Wood","Amy Ahn","Patrick Ryan","Pauline Ramsey","Yifat Gottlibe"];
+
+const projects = [
+  "Allstate UX Ideal State","Bill Negotiations - Post Sub","CDS Partnership for \"Reskin\" and Visual ID",
+  "CK+ on Web","Dogfood 2: Address data broker family","Dogfood 2: Allstate cards update to latest design",
+  "Feedback modules","Front Door: Painted Door Test - Data Breach","FY27 Identity protection",
+  "GA: Free Trial dWeb experience","GA: Free Trial experience","GA: Handle unlinked CK/Intuit Accounts",
+  "GA: Identity Tab","GA: Landing Page contextual: in prod test","GA: Landing Page general test: Designs V2",
+  "GA: Landing Page general test: Designs V3","GA: Landing Page test: Remove Basic SKU",
+  "GA: Upgrade & Downgrade for Paid members","ID grid iteration - personal info count","LP workshop",
+  "MVP+ BN experience enhancement on HUB","MVP+ CK Plus Hub variations","MVP+ Identity tab Post-sub",
+  "MVP+ Identity tab Pre-sub","Newton Front Door Placements","Onboarding (Welcome msg + Checklist)",
+  "Post GA: Hub - design concept","Post GA: Hub - documentation & mapping","Post MVP - Subscribed experience",
+  "Post MVP Bill Negotiations - Non CAMM / CAMM","Post-cancellation experience","Post Tax file experience",
+  "Takeover: New Copy Variants","Takeover: Optimize CK Plus takeover","Unlinking Block Page","Other / Not listed"
+];
+
+// Generate upcoming Tuesdays and Thursdays (next 4 weeks)
+function getUpcomingDates() {
+  const dates = [];
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  for (let i = 0; i <= 28; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const day = d.getDay();
+    if (day === 2 || day === 4) { // Tuesday=2, Thursday=4
+      dates.push(d);
+    }
+  }
+  return dates.slice(0, 8); // next 8 sessions (~4 weeks)
+}
+
+function formatDate(d) {
+  return d.toISOString().split("T")[0]; // YYYY-MM-DD
+}
+
+function formatDisplay(d) {
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+function getDayName(d) {
+  return d.getDay() === 2 ? "Tuesday" : "Thursday";
+}
+
+function getSessionTime(d) {
+  return d.getDay() === 2 ? "9:35 – 10:00 am PST" : "8:50 – 9:15 am PST";
+}
+
+function getSlots(d) {
+  const prefix = d.getDay() === 2 ? "tue" : "thu";
+  return [
+    { id: `${prefix}-half`, label: "Half session", desc: "~12 min" },
+    { id: `${prefix}-full`, label: "Full session", desc: "~25 min" }
+  ];
+}
+
+const upcomingDates = getUpcomingDates();
+let selectedDate = upcomingDates[0];
+let bookings = {};
+let activeSlot = null;
+let statusMsg = "";
+let loading = false;
+
+async function fetchBookings() {
+  loading = true;
+  render();
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=load&date=${formatDate(selectedDate)}`);
+    const data = await res.json();
+    bookings = data.bookings || {};
+  } catch(e) { bookings = {}; }
+  loading = false;
+  render();
+}
+
+async function book(slotId) {
+  const name = document.getElementById("name-" + slotId)?.value;
+  const project = document.getElementById("proj-" + slotId)?.value || "No project selected";
+  if (!name) { alert("Please select your name."); return; }
+  setStatus("Saving...");
+  try {
+    const url = `${SCRIPT_URL}?action=book&date=${formatDate(selectedDate)}&slotId=${encodeURIComponent(slotId)}&name=${encodeURIComponent(name)}&project=${encodeURIComponent(project)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.success) {
+      bookings[slotId] = { name, project };
+      activeSlot = null;
+    } else {
+      setStatus("Error saving. Please try again."); return;
+    }
+  } catch(e) { setStatus("Error saving. Please try again."); return; }
+  setStatus("Saved!");
+  setTimeout(() => setStatus(""), 2000);
+  render();
+}
+
+async function clearSlot(slotId) {
+  setStatus("Removing...");
+  try {
+    const url = `${SCRIPT_URL}?action=clear&date=${formatDate(selectedDate)}&slotId=${encodeURIComponent(slotId)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.success) {
+      delete bookings[slotId];
+    } else {
+      setStatus("Error. Please try again."); return;
+    }
+  } catch(e) { setStatus("Error. Please try again."); return; }
+  setStatus("Removed.");
+  setTimeout(() => setStatus(""), 2000);
+  render();
+}
+
+function selectDate(idx) {
+  selectedDate = upcomingDates[idx];
+  activeSlot = null;
+  fetchBookings();
+}
+
+function setStatus(msg) {
+  statusMsg = msg;
+  const el = document.getElementById("status-bar");
+  if (el) el.textContent = msg;
+}
+
+function initials(name) { return name.split(" ").map(n => n[0]).slice(0,2).join(""); }
+function totalBooked() { return Object.keys(bookings).length; }
+function totalSlots() { return getSlots(selectedDate).length; }
+
+function render() {
+  const app = document.getElementById("app");
+  const slots = getSlots(selectedDate);
+
+  let html = `
+    <div class="header">
+      <div>
+        <h1>Design Crit / Jam</h1>
+        <p>Sign up at least 3 days in advance · Subscriptions team</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="status-bar" id="status-bar">${statusMsg}</span>
+        <div class="counter"><div class="num">${totalBooked()}/${totalSlots()}</div><div class="label">slots filled</div></div>
+      </div>
+    </div>
+
+    <div class="week-selector">
+      <label>Select a session date</label>
+      <div class="week-tabs">
+        ${upcomingDates.map((d, i) => `
+          <div class="week-tab ${formatDate(d) === formatDate(selectedDate) ? "selected" : ""}" onclick="selectDate(${i})">
+            ${formatDisplay(d)}
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#f1f1f1;border:0.5px solid #ccc;"></div> Open</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#E1F5EE;"></div> Booked</div>
+    </div>
+  `;
+
+  if (loading) {
+    html += `<div class="loading">Loading...</div>`;
+  } else {
+    html += `<div class="session">
+      <div class="session-header">
+        <div class="day-badge">${getDayName(selectedDate)}</div>
+        <span class="session-date">${getSessionTime(selectedDate)} · ${formatDisplay(selectedDate)}</span>
+      </div>
+      <div class="slots">`;
+
+    slots.forEach(slot => {
+      const b = bookings[slot.id];
+      const isActive = activeSlot === slot.id;
+
+      if (b) {
+        html += `<div class="slot booked">
+          <div class="slot-top"><span class="slot-badge booked">${slot.label}</span></div>
+          <div class="booked-info">
+            <div class="avatar">${initials(b.name)}</div>
+            <div>
+              <div class="booked-name">${b.name}</div>
+              <div class="booked-project">${b.project}</div>
+            </div>
+          </div>
+          <button class="btn-remove" onclick="clearSlot('${slot.id}')">Remove</button>
+        </div>`;
+      } else if (isActive) {
+        html += `<div class="slot active">
+          <div class="slot-top"><span class="slot-badge open">${slot.label}</span></div>
+          <div class="form-field">
+            <label>Your name</label>
+            <select id="name-${slot.id}">
+              <option value="">Select your name...</option>
+              ${designers.map(d => `<option value="${d}">${d}</option>`).join("")}
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Project (optional)</label>
+            <select id="proj-${slot.id}">
+              <option value="">Select a project...</option>
+              ${projects.map(p => `<option value="${p}">${p}</option>`).join("")}
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn-confirm" onclick="book('${slot.id}')">Confirm</button>
+            <button class="btn-cancel" onclick="cancelSlot()">Cancel</button>
+          </div>
+        </div>`;
+      } else {
+        html += `<div class="slot" onclick="openSlot('${slot.id}')">
+          <div class="slot-top"><span class="slot-badge open">${slot.label}</span></div>
+          <p class="slot-desc">${slot.desc}</p>
+          <div class="signup-cta">+ Sign up for this slot</div>
+        </div>`;
+      }
+    });
+
+    html += `</div></div>`;
+  }
+
+  html += `<div class="footer">Projects and designers reflect active Subscription team work. Showing next 4 weeks of sessions.</div>`;
+  app.innerHTML = html;
+}
+
+function openSlot(id) { activeSlot = id; render(); }
+function cancelSlot() { activeSlot = null; render(); }
+
+(async () => { await fetchBookings(); })();
+</script>
+</body>
+</html>
